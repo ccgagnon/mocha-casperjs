@@ -88,7 +88,18 @@ mocha.setup({
   timeout: opts.timeout || 30000,
   bail: opts.bail || false,
   useColors: !opts['no-color']
-})
+});
+
+// Pipeline to add mocha options. Usefull for custom reporters with options
+if(typeof opts.mochaoptspl == 'string'){
+
+  var mochaOptsPipeline = require(fs.absolute(opts.mochaoptspl));
+
+  if(typeof mochaOptsPipeline != undefined &&
+     typeof mochaOptsPipeline.execute == "function"){
+      mocha.options = mochaOptsPipeline.execute(mocha.options);
+  }
+}
 
 try {
   mocha.reporter(opts.reporter || 'spec')
